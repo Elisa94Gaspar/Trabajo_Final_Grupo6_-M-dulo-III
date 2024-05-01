@@ -1,0 +1,653 @@
+---
+title: " Análisis exploratorio de la producción de hidrocarburos en Chubut"  
+author: "GRUPO 6: Federico Infante, Belén Gonzalez, Rodrigo Díaz, Nelson Gareca, Elisa Gaspar."
+date: "2024-04-28"
+output: 
+  beamer_presentation: default
+  slidy_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Análisis exploratorio del dataset de Chubut a marzo de 2024
+
+Lectura de la base de datos con library(readr)
+
+```{r}
+
+library(readr)
+datos_Chubut <- read_csv("~/Diplomatura UNPA-YPF/Módulo III/Trabajo Final_Modulo3_Grupo 6/datos_Chubut.csv")
+View(datos_Chubut)
+datos_Chubut <- na.omit(datos_Chubut)
+datos_Chubut
+
+```
+
+
+Summary de la base de datos
+
+```{r}
+summary(datos_Chubut)
+```
+```{r}
+summary(datos_Chubut$Petroleo_Mensual_m3)
+```
+```{r}
+summary(datos_Chubut$Gas_Mensual_m3)
+```
+
+## A continuación se analizará la producción de petroleo diario, mensual y acumulado.
+
+
+Con el histograma podemos ver con que frecuencia se repite la producción de petróleo diaria, mensual y acumulada de los distintos pozos de yacimientos presentes en Chubut 
+
+```{r}
+hist(datos_Chubut$Petroleo_Diario_m3)
+```
+```{r}
+hist(datos_Chubut$Petroleo_Mensual_m3)
+```
+```{r}
+hist(datos_Chubut$Petroleo_Acumulado_m3)
+```
+
+## A continuación se analizará la producción de petroleo diario, mensual y acumulado.
+
+Con el histograma podemos ver con que frecuencia se repite la producción de gas diaria, mensual y acumulada de los distintos pozos de yacimientos presentes en Chubut 
+
+
+```{r}
+hist(datos_Chubut$Gas_Diario_m3)
+```
+```{r}
+hist(datos_Chubut$Gas_Mensual_m3)
+```
+```{r}
+
+hist(datos_Chubut$Gas_Acumulado_m3)
+```
+```{r}
+
+# Visualizar los datos en histogramas
+
+par(mfrow = c(3, 1))  # Organiza las gráficas en 3 filas y 1 columna
+hist(datos_Chubut$Petroleo_Diario_m3, main = "Histograma de Petroleo Diario", xlab = "Valor")
+hist(datos_Chubut$Petroleo_Mensual_m3, main = "Histograma de Petroleo Mensual", xlab = "Valor")
+hist(datos_Chubut$Petroleo_Acumulado_m3, main = "Histograma de Petroleo Acumulado", xlab = "Valor")
+```
+
+
+## Visualización de la producción de petróleo en m3 trabajando con rangos 
+
+Se realizaron rangos para obtener una mejor visualización de los datos.
+
+
+
+```{r}
+datos <- datos_Chubut$Petroleo_Diario_m3
+
+# Definir los intervalos (rangos)
+intervalos <- seq(0, 80, by = 25)  # Rangos de 0 a 100 en intervalos de 20
+
+# Crear rangos utilizando la función cut()
+rangos <- cut(datos, breaks = intervalos)
+
+# Mostrar los rangos asignados a cada valor
+rangos
+
+# Contar el número de observaciones en cada rango
+recuentos <- table(rangos)
+
+etiquetas_x <- paste(intervalos[-length(intervalos)], "-", intervalos[-1], sep = "") 
+
+# Visualizar el histograma de los rangos
+barplot1<- barplot(recuentos, main = "Histograma de petroleo diario", xlab = "Rangos de petróleo en m3", ylab = "Frecuencia", 
+        names.arg = etiquetas_x, las = 1, cex.names = 1)  # 'las = 2' rota las etiquetas del eje x en 45 grados
+
+
+```
+
+```{r}
+datos <- datos_Chubut$Petroleo_Mensual_m3
+
+# Definir los intervalos (rangos)
+intervalos <- seq(0, 2500, by = 500)  # Rangos de 0 a 100 en intervalos de 20
+
+# Crear rangos utilizando la función cut()
+rangos <- cut(datos, breaks = intervalos)
+
+# Mostrar los rangos asignados a cada valor
+rangos
+
+# Contar el número de observaciones en cada rango
+recuentos <- table(rangos)
+
+etiquetas_x <- paste(intervalos[-length(intervalos)], "-", intervalos[-1], sep = "") 
+
+# Visualizar el histograma de los rangos
+barplot2 <-barplot(recuentos, main = "Histograma de petroleo mensual", xlab = "Rangos de petróleo en m3", ylab = "Frecuencia", 
+        names.arg = etiquetas_x, las = 1, cex.names = 1)  # 'las = 2' rota las etiquetas del eje x en 45 grados
+```
+
+
+```{r}
+# Ejemplo de vector de datos
+datos <- datos_Chubut$Petroleo_Acumulado_m3
+
+# Definir los intervalos (rangos)
+intervalos <- pretty(datos, n = 10)  # Intervalos "bonitos" basados en los datos reales
+
+# Crear rangos utilizando la función cut()
+rangos <- cut(datos, breaks = intervalos)
+
+# Contar el número de observaciones en cada rango
+recuentos <- table(rangos)
+
+# Obtener etiquetas para el eje x
+etiquetas_x <- paste(format(intervalos[-length(intervalos)], scientific = FALSE), 
+                     "-", 
+                     format(intervalos[-1], scientific = FALSE), 
+                     sep = "") 
+
+# Visualizar el histograma de los rangos
+barplot3 <- barplot(recuentos, main = "Histograma de petroleo acumulado", 
+        xlab = "Rangos de petróleo en m3", 
+        ylab = "Frecuencia", 
+        names.arg = etiquetas_x, 
+        las = 1, 
+        cex.names = 0.8)  # 'las = 1' rota las etiquetas del eje x en 90 grados
+
+
+```
+```{r}
+# Establecer la disposición de la pantalla
+par(mfrow = c(3, 1))
+
+# Gráfico 1: Histograma de petróleo diario
+datos <- datos_Chubut$Petroleo_Diario_m3
+intervalos <- seq(0, 80, by = 25)
+rangos <- cut(datos, breaks = intervalos)
+recuentos <- table(rangos)
+etiquetas_x <- paste(intervalos[-length(intervalos)], "-", intervalos[-1], sep = "")
+barplot(recuentos, main = "Histograma de petróleo diario", xlab = "Rangos de petróleo en m3", ylab = "Frecuencia", 
+        names.arg = etiquetas_x, las = 1, cex.names = 1)
+
+# Gráfico 2: Histograma de petróleo mensual
+datos <- datos_Chubut$Petroleo_Mensual_m3
+intervalos <- seq(0, 2500, by = 500)
+rangos <- cut(datos, breaks = intervalos)
+recuentos <- table(rangos)
+etiquetas_x <- paste(intervalos[-length(intervalos)], "-", intervalos[-1], sep = "")
+barplot(recuentos, main = "Histograma de petróleo mensual", xlab = "Rangos de petróleo en m3", ylab = "Frecuencia", 
+        names.arg = etiquetas_x, las = 1, cex.names = 1)
+
+# Gráfico 3: Histograma de petróleo acumulado
+datos <- datos_Chubut$Petroleo_Acumulado_m3
+intervalos <- pretty(datos, n = 10)
+rangos <- cut(datos, breaks = intervalos)
+recuentos <- table(rangos)
+etiquetas_x <- paste(format(intervalos[-length(intervalos)], scientific = FALSE), "-", 
+                     format(intervalos[-1], scientific = FALSE), sep = "")
+barplot(recuentos, main = "Histograma de petróleo acumulado", xlab = "Rangos de petróleo en m3", ylab = "Frecuencia", 
+        names.arg = etiquetas_x, las = 1, cex.names = 0.8)
+```
+
+
+En base al gráfico se sabe que por ejemplo, tenemos mayor cantidad de pozos que producen un rango de 0-500 m3 de petróleo al mes.
+
+## Visualización de la producción de gas en m3 trabajando con rangos 
+
+```{r}
+datos <- datos_Chubut$Gas_Diario_m3
+
+# Definir los intervalos (rangos)
+intervalos <- seq(0, 70000, by = 10000)  # Rangos de 0 a 100 en intervalos de 20
+
+# Crear rangos utilizando la función cut()
+rangos <- cut(datos, breaks = intervalos)
+
+# Mostrar los rangos asignados a cada valor
+rangos
+
+# Contar el número de observaciones en cada rango
+recuentos <- table(rangos)
+
+etiquetas_x <- paste(intervalos[-length(intervalos)], "-", intervalos[-1], sep = "") 
+
+# Visualizar el histograma de los rangos
+barplot1<- barplot(recuentos, main = "Histograma de gas diario", xlab = "Rangos de gas en m3", ylab = "Frecuencia", 
+        names.arg = etiquetas_x, las = 1, cex.names = 1)  # 'las = 2' rota las etiquetas del eje x en 45 grados
+
+
+```
+```{r}
+hist(datos_Chubut$Gas_Diario_m3)
+```
+
+
+
+```{r}
+datos <- datos_Chubut$Gas_Mensual_m3
+
+# Definir los intervalos (rangos)
+intervalos <- seq(0, 1946550, by = 80000)  # Rangos de 0 a 100 en intervalos de 20
+
+# Crear rangos utilizando la función cut()
+rangos <- cut(datos, breaks = intervalos)
+
+# Mostrar los rangos asignados a cada valor
+rangos
+
+# Contar el número de observaciones en cada rango
+recuentos <- table(rangos)
+
+etiquetas_x <- paste(intervalos[-length(intervalos)], "-", intervalos[-1], sep = "") 
+
+# Visualizar el histograma de los rangos
+barplot2 <-barplot(recuentos, main = "Histograma de gas mensual", xlab = "Rangos de gas en m3", ylab = "Frecuencia", 
+        names.arg = etiquetas_x, las = 1, cex.names = 1)  # 'las = 2' rota las etiquetas del eje x en 45 grados
+```
+```{r}
+hist(datos_Chubut$Gas_Mensual_m3)
+
+```
+
+
+```{r}
+# Ejemplo de vector de datos
+datos <- datos_Chubut$Gas_Acumulado_m3
+
+# Definir los intervalos (rangos)
+intervalos <- pretty(datos, n = 10)  # Intervalos "bonitos" basados en los datos reales
+
+# Crear rangos utilizando la función cut()
+rangos <- cut(datos, breaks = intervalos)
+
+# Contar el número de observaciones en cada rango
+recuentos <- table(rangos)
+
+# Obtener etiquetas para el eje x
+etiquetas_x <- paste(format(intervalos[-length(intervalos)], scientific = FALSE), 
+                     "-", 
+                     format(intervalos[-1], scientific = FALSE), 
+                     sep = "") 
+
+# Visualizar el histograma de los rangos
+barplot3 <- barplot(recuentos, main = "Histograma de gas acumulado", 
+        xlab = "Rangos de gas en m3", 
+        ylab = "Frecuencia", 
+        names.arg = etiquetas_x, 
+        las = 1, 
+        cex.names = 0.8)  # 'las = 1' rota las etiquetas del eje x en 90 grados
+
+
+```
+```{r}
+hist(datos_Chubut$Gas_Acumulado_m3)
+```
+
+
+```{r}
+
+# Visualizar los datos en histogramas
+
+par(mfrow = c(3, 1))  # Organiza las gráficas en 3 filas y 1 columna
+hist(datos_Chubut$Gas_Diario_m3, main = "Histograma de Gas Diario", xlab = "Valor")
+hist(datos_Chubut$Gas_Mensual_m3, main = "Histograma de Gas Mensual", xlab = "Valor")
+hist(datos_Chubut$Gas_Acumulado_m3, main = "Histograma de Gas Acumulado", xlab = "Valor")
+```
+
+
+
+```{r}
+# Establecer la disposición de la pantalla
+par(mfrow = c(3, 1))
+
+# Gráfico 1: Histograma de petróleo diario
+datos <- datos_Chubut$Gas_Diario_m3
+intervalos <- seq(0, 70000, by = 10000)
+rangos <- cut(datos, breaks = intervalos)
+recuentos <- table(rangos)
+etiquetas_x <- paste(intervalos[-length(intervalos)], "-", intervalos[-1], sep = "")
+barplot(recuentos, main = "Histograma de gas diario", xlab = "Rangos de gas en m3", ylab = "Frecuencia", 
+        names.arg = etiquetas_x, las = 1, cex.names = 1)
+
+# Gráfico 2: Histograma de petróleo mensual
+datos <- datos_Chubut$Gas_Mensual_m3
+intervalos <- seq(0, 1946550, by = 80000)
+rangos <- cut(datos, breaks = intervalos)
+recuentos <- table(rangos)
+etiquetas_x <- paste(intervalos[-length(intervalos)], "-", intervalos[-1], sep = "")
+barplot(recuentos, main = "Histograma de gas mensual", xlab = "Rangos de gas en m3", ylab = "Frecuencia", 
+        names.arg = etiquetas_x, las = 1, cex.names = 1)
+
+# Gráfico 3: Histograma de petróleo acumulado
+datos <- datos_Chubut$Gas_Acumulado_m3
+intervalos <- pretty(datos, n = 10)
+rangos <- cut(datos, breaks = intervalos)
+recuentos <- table(rangos)
+etiquetas_x <- paste(format(intervalos[-length(intervalos)], scientific = FALSE), "-", 
+                     format(intervalos[-1], scientific = FALSE), sep = "")
+barplot(recuentos, main = "Histograma de gas acumulado", xlab = "Rangos de gas en m3", ylab = "Frecuencia", 
+        names.arg = etiquetas_x, las = 1, cex.names = 0.8)
+```
+
+
+En base a este último gráfico sabemos que por ejemplo, la mayor parte de los pozos producen un rango de 0 a 80000 m3 de gas mensual.
+
+
+
+## Función ggplot2
+
+Esta función se aplicó para analizar la cantidad de pozos correspondiente a cada yacimiento en Chubut para la producción de petróleo. 
+
+```{r}
+library(ggplot2)
+
+ggplot(datos_Chubut, aes(x = Petroleo_Diario_m3, fill= YACIMIENTO_SEN)) +
+  geom_histogram(color="black", bins= 30)
+```
+
+```{r}
+library(ggplot2)
+
+ggplot(datos_Chubut, aes(x = Petroleo_Mensual_m3, fill= YACIMIENTO_SEN)) +
+  geom_histogram(color="black", bins= 30)
+```
+
+```{r}
+library(ggplot2)
+
+ggplot(datos_Chubut, aes(x = Petroleo_Acumulado_m3, fill= YACIMIENTO_SEN)) +
+  geom_histogram(color="black", bins= 30) 
+```
+
+
+
+
+## Función gridExtra 
+
+Esta función fue empleada para visualizar los 3 ggplot juntos
+
+```{r}
+library(ggplot2)
+library(gridExtra)
+
+
+
+Petroleo_diario <- ggplot(datos_Chubut, aes(x = Petroleo_Mensual_m3, fill= YACIMIENTO_SEN)) + geom_histogram(color="black", bins=30)
+Petroleo_mensual<- ggplot(datos_Chubut, aes(x = Petroleo_Diario_m3, fill= YACIMIENTO_SEN)) + geom_histogram(color="black", bins=30)
+Petroleo_acumulado<- ggplot(datos_Chubut, aes(x = Petroleo_Acumulado_m3, fill= YACIMIENTO_SEN)) + geom_histogram(color="black", bins= 30)
+
+grid.arrange(Petroleo_diario, Petroleo_mensual, Petroleo_acumulado, nrow = 3)
+
+```
+
+
+
+De este gráfico se desprende que por ejemplo, en lo que respeta a la producción de diaria de petróleo aquellos pozos que producen un rango de 0 a 20 m3 pertenecen en su mayoria al yacimiento Manantiales Behr.
+
+## Función Ggplot
+
+La misma función se aplicó para analizar la cantidad de pozos correspondiente a cada yacimiento en Chubut para la producción de Gas. 
+
+```{r}
+library(ggplot2)
+
+ggplot(datos_Chubut, aes(x = Gas_Diario_m3, fill= YACIMIENTO_SEN)) +
+  geom_histogram(color="black", bins= 30)
+```
+
+
+```{r}
+library(ggplot2)
+
+ggplot(datos_Chubut, aes(x = Gas_Mensual_m3, fill= YACIMIENTO_SEN)) +
+  geom_histogram(color="black", bins= 30)
+```
+
+
+```{r}
+library(ggplot2)
+
+ggplot(datos_Chubut, aes(x = Gas_Acumulado_m3, fill= YACIMIENTO_SEN)) +
+  geom_histogram(color="black", bins= 30) 
+```
+
+
+Esta función fue empleada para visualizar los 3 ggplot juntos nuevamente
+
+```{r}
+library(ggplot2)
+library(gridExtra)
+
+
+
+Gas_diario <- ggplot(datos_Chubut, aes(x = Gas_Mensual_m3, fill= YACIMIENTO_SEN)) + geom_histogram(color="black", bins=30)
+Gas_mensual<- ggplot(datos_Chubut, aes(x = Gas_Diario_m3, fill= YACIMIENTO_SEN)) + geom_histogram(color="black", bins=30)
+Gas_acumulado<- ggplot(datos_Chubut, aes(x = Gas_Acumulado_m3, fill= YACIMIENTO_SEN)) + geom_histogram(color="black", bins= 30)
+
+grid.arrange(Gas_diario, Gas_mensual, Gas_acumulado, nrow = 3)
+
+```
+
+
+De este gráfico se infiere que después de los pozos del yacimiento Manantiales Behr, los pozos del yacimiento Escalante se ubican en segundo lugar en cuanto a mayor cantidad de pozos de gas en producción diaria, en un rango que va de 0 a 5000 m3. 
+
+
+## Categorización de datos de petroleo mensual en m3
+
+Se intentó dividir los valores de volúmen de la columnas petroleo mensual, gas mensual y agua mensual, del dataset en bajo, medio y alto para trabajar categorías.
+
+```{r}
+# Crear un vector de datos numéricos
+datos <- datos_Chubut$Petroleo_Mensual_m3 
+
+# Categorizar los datos en tres intervalos
+categorias <- cut(datos, breaks = 3, labels = c("Bajo", "Medio", "Alto"))
+
+# Mostrar las categorías
+print(categorias)
+
+plot(categorias)
+```
+
+```{r}
+# Crear un vector de datos numéricos
+datos <- datos_Chubut$Gas_Mensual_m3 
+
+# Categorizar los datos en tres intervalos
+categorias <- cut(datos, breaks = 3, labels = c("Bajo", "Medio", "Alto"))
+
+# Mostrar las categorías
+print(categorias)
+
+plot(categorias)
+```
+
+```{r}
+# Crear un vector de datos numéricos
+datos <- datos_Chubut$Agua_Mensual__m3
+
+# Categorizar los datos en tres intervalos
+categorias <- cut(datos, breaks = 3, labels = c("Bajo", "Medio", "Alto"))
+
+# Mostrar las categorías
+print(categorias)
+
+plot(categorias)
+```
+
+A partir de los gráficos se asume que la mayor parte de los datos expresados en m3 se agrupan en el grupo Bajo, definido por R. Quedando la menor parte de ellos en el grupo Alto.
+
+
+## Función plot
+
+Se intentó correlacionar datos de gas y petroleo diario en m3
+
+```{r}
+plot(datos_Chubut$Petroleo_Diario_m3, datos_Chubut$Gas_Diario_m3)
+```
+
+
+## Función density aplicada a la columna petroleo acumulado del dataset
+
+Se puede notar que tenemos un grupo de datos que se destaca por encima del resto, el cual representa un rango de producción de 0 a 50000 m3.
+```{r}
+plot(density(datos_Chubut$Petroleo_Acumulado_m3))
+```
+
+```{r}
+hist(datos_Chubut$Petroleo_Acumulado_m3, freq = FALSE, main = "Pozos", ylab = "Densidad", xlab = "Petróleo en m3")
+lines(density(datos_Chubut$Petroleo_Acumulado_m3), lwd = 2, col = "red")
+
+
+```
+
+
+
+## Función plot para visualizar datos de gas diario, mensual y acumulado.
+```{r}
+plot(datos_Chubut[, 10:12])
+```
+
+
+
+## Función plot para visualizar datos de agua diaria, mensual y acumulada.
+
+```{r}
+plot(datos_Chubut[, 13:15])
+
+```
+
+
+## Función plot para visualizar datos de gas y petróleo acumulado agregando colores
+
+Se observa claramente una mayor concentración de datos sobre el margen inferior izquierdo del gráfico.  
+
+```{r}
+plot(datos_Chubut[, c(9, 12)], col = c("red", "blue"))
+
+```
+
+
+## Categorización de la columna NOMBRE_DE_ESTADO_TOW para saber cuantos pozos están en reserva, abandonados, etc.
+
+De este gráfico se asume que la mayor parte de los pozos de los yacimientos de Chubut están en abando permanente (AP). Por otro lado, se destaca la línea rosada que indica abundante cantidad de pozos en producción (P) y la línea gris que hace referencia a aquellos pozos de reserva en recuperación secundaria (RRS).
+
+```{r}
+library(readr)
+datos_Chubut <- read_csv("~/Diplomatura UNPA-YPF/Módulo III/Trabajo Final_Modulo3_Grupo 6/datos_Chubut.csv")
+View(datos_Chubut)
+
+tabla5 <- table(datos_Chubut$NOMBRE_DE_ESTADO_TOW)
+tabla5
+```
+
+
+
+```{r}
+ 
+# Graficar con nombres inclinados en el eje x
+plot(tabla5, col=c("red","blue","green","purple","orange","yellow","black","white","brown","pink", "cyan", "magenta", "gray","skyblue","maroon","lavender"), 
+     las=2, # Orientación inclinada de los nombres en el eje x
+     cex.axis=0.7) # Tamaño de la letra de los nombres en el eje x
+
+
+```
+
+
+
+## Función sort
+
+Esta función fue útil para ordenar los volúmenes de pozos de petróleo mensual de menor a mayor
+
+```{r}
+datos_Chubut <- na.omit(datos_Chubut)
+datos_Chubut
+muestra_ord <- sort(datos_Chubut$Petroleo_Mensual_m3)
+muestra_ord
+
+```
+
+
+
+## Función length
+
+Fue útil para saber el tamaño de la muestra trabajado hasta ahora, o sea cantidad de pozos medidos de petróleo, gas y agua en este caso.
+
+```{r}
+n <- length(datos_Chubut$Petroleo_Mensual_m3)
+n
+```
+
+
+
+## Funciones mín y max 
+
+Para conocer los pozos con mayor producción y menor producción de petróleo - gas a nivel mensual
+
+```{r}
+minimo <- min(datos_Chubut$Petroleo_Mensual_m3)
+minimo
+
+maximo <- max(datos_Chubut$Petroleo_Mensual_m3)
+maximo
+
+```
+
+
+```{r}
+minimo <- min(datos_Chubut$Gas_Mensual_m3)
+minimo
+
+maximo <- max(datos_Chubut$Gas_Mensual_m3)
+maximo
+
+```
+
+También se aplicaron estas funciones para conocer volúmenes mínimo y máximo requeridos de agua por pozo.
+
+```{r}
+minimo <- min(datos_Chubut$Agua_Mensual__m3)
+minimo
+
+maximo <- max(datos_Chubut$Agua_Mensual__m3)
+maximo
+
+```
+
+
+## Función ggplot comparación de gas y petroleo 
+
+Se compara la producción de gas y petróleo en un ggplot de geometría de puntos, donde en el eje X se observan los yacimientos y en el eje Y el volúmen de hidrocarburos en escala logarítmica, dado que los valores trabajados son muy distintos.
+
+```{r}
+
+ggplot(datos_Chubut, aes(x = datos_Chubut$YACIMIENTO_SEN)) +
+  geom_point(aes(y = datos_Chubut$Petroleo_Mensual_m3, color = "Petróleo"), size = 3) +
+  geom_point(aes(y = datos_Chubut$Gas_Mensual_m3, color = "Gas"), size = 1.5) +
+  labs(title = "Producción de Petróleo y Gas",
+       x = "Marzo de 2024",
+       y = "Volumen (m3)") +
+  scale_color_manual(values = c("Petróleo" = "blue", "Gas" = "red")) +
+  theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_log10(labels = scales::comma_format())
+
+```
+
+
+
+## Visualización de GOR para el mes de Marzo en yacimientos de Chubut
+
+
+```{r}
+ggplot(datos_Chubut, aes(x = datos_Chubut$YACIMIENTO_SEN)) +
+  geom_point(aes(y = datos_Chubut$GOR), size = 3) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + scale_y_log10(labels = scales::comma_format())
+
+```
+
+
